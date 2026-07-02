@@ -1,0 +1,433 @@
+/* Custom Properties / Global Variables - THEMA GELAP & BIRU PREMIUM */
+:root {
+    --primary-color: #0084ff;         /* Biru Neon Premium */
+    --primary-hover: #0066cc;         /* Biru Gelap (Hover) */
+    --bg-body: #0f172a;               /* Latar Belakang Utama (Slate Dark) */
+    --bg-panel: #1e293b;              /* Latar Belakang Kad & Panel (Card Dark) */
+    --text-main: #f8fafc;             /* Tulisan Utama (Putih Cerah) */
+    --text-muted: #94a3b8;            /* Tulisan Pembantu (Kelabu Muted) */
+    --border-color: #334155;          /* Warna Sempadan Sisi Gelap */
+    
+    --color-income: #10b981;          /* Hijau Emerald untuk Income */
+    --color-income-light: rgba(16, 185, 129, 0.15); /* Hijau Transparan */
+    --color-expense: #ef4444;         /* Merah untuk Expense */
+    --color-expense-light: rgba(239, 68, 68, 0.15); /* Merah Transparan */
+    
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.4);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --transition: all 0.3s ease;
+}
+
+/* Reset Dasar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    line-height: 1.6;
+    padding-bottom: 60px;
+}
+
+/* Header Reka Bentuk Premium */
+.main-header {
+    background-color: var(--bg-panel);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 15px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    color: var(--primary-color);
+    width: 32px;
+    height: 32px;
+}
+
+.logo-area h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.logo-area h1 span {
+    color: var(--primary-color);
+}
+
+.logo-area .sub-title {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.action-utils {
+    display: flex;
+    gap: 12px;
+}
+
+/* Layout Grid & Main Container */
+.main-container {
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 0 24px;
+}
+
+/* Dashboard Summary Cards */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 35px;
+}
+
+.card {
+    background-color: var(--bg-panel);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.card h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+}
+
+.card-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+}
+
+/* Penunjuk Warna Sisi Kad Moden */
+.card-balance { border-left: 6px solid var(--primary-color); }
+.card-income { border-left: 6px solid var(--color-income); }
+.card-expense { border-left: 6px solid var(--color-expense); }
+
+.icon-income { color: var(--color-income); }
+.icon-expense { color: var(--color-expense); }
+
+/* Struktur Content Pecahan 2 Ruangan */
+.content-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+
+@media (min-width: 1024px) {
+    .content-layout {
+        grid-template-columns: 400px 1fr;
+    }
+}
+
+/* Panel & Containers */
+.panel {
+    background-color: var(--bg-panel);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.panel-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #ffffff;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+/* Gaya Borang (Forms) */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #cbd5e1;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 11px 16px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background-color: #0f172a; /* Warna input digelapkan */
+    color: var(--text-main);
+    transition: var(--transition);
+}
+
+/* Untuk Chrome/Firefox dark date picker icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 132, 255, 0.25);
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+/* Sistem Butang (Buttons) */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #fff;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+    background-color: #334155;
+    color: #f8fafc;
+}
+
+.btn-secondary:hover {
+    background-color: #475569;
+}
+
+.btn-danger-outline {
+    background-color: transparent;
+    border-color: #7f1d1d;
+    color: #f87171;
+}
+
+.btn-danger-outline:hover {
+    background-color: var(--color-expense-light);
+}
+
+.btn-text {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+}
+
+.btn-text:hover {
+    color: var(--text-main);
+}
+
+/* Navigasi Controls Grid (Carian, Filter, Aturan) */
+.controls-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 640px) {
+    .controls-grid {
+        grid-template-columns: 2fr 1fr 1fr;
+    }
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    width: 18px;
+    height: 18px;
+}
+
+.search-box input {
+    padding-left: 42px;
+}
+
+/* Reka Bentuk Jadual Dinamik */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.data-table th {
+    background-color: #0f172a; /* Tukar pengepala jadual kepada tema gelap */
+    color: #cbd5e1;
+    font-weight: 600;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-color);
+    color: #e2e8f0;
+}
+
+.data-table tbody tr:hover {
+    background-color: #1e293b;
+}
+
+/* Tulisan Badge / Penanda Aliran */
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-income {
+    background-color: var(--color-income-light);
+    color: #34d399;
+}
+
+.badge-expense {
+    background-color: var(--color-expense-light);
+    color: #f87171;
+}
+
+.amt-income {
+    color: #34d399;
+    font-weight: 600;
+}
+
+.amt-expense {
+    color: #f87171;
+    font-weight: 600;
+}
+
+.badge-category {
+    background-color: #334155;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+
+/* Ruang Butang Tindakan Di Dalam Jadual */
+.actions-cell {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.btn-edit { color: #38bdf8; }
+.btn-edit:hover { background-color: rgba(56, 189, 248, 0.15); }
+
+.btn-delete { color: #f87171; }
+.btn-delete:hover { background-color: var(--color-expense-light); }
+
+.text-center { text-align: center; }
+
+/* Status Kosong / Tiada Rekod */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+
+.empty-state i {
+    width: 48px;
+    height: 48px;
+    stroke-width: 1.5;
+    margin-bottom: 10px;
+    color: #475569;
+}
