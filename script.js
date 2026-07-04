@@ -1,6 +1,6 @@
 // --- STATE UTK SIMPAN DATA ---
 let transactions = [];
-let currentBase64Receipt = ""; // Menyimpan sementara string Base64 file resit yang sedang diupload
+let currentReceiptLink = ""; // Menyimpan nilai pautan input secara sementara
 
 // --- INITIAL LOAD ---
 window.onload = function() {
@@ -9,7 +9,7 @@ window.onload = function() {
     document.getElementById('date').value = today;
 
     loadData();
-    toggleFormStyle(); // Kemas kini gaya input radio semasa muat turun pertama
+    toggleFormStyle(); // Kemas kini gaya butang simpan di awal aplikasi
 };
 
 // --- LOAD DATA DARI LOCALSTORAGE ---
@@ -20,7 +20,7 @@ function loadData() {
             transactions = JSON.parse(storedData);
         } catch (e) {
             transactions = [];
-            showToast("Gagal memuat turun data lama. Struktur rosak.", "danger");
+            showToast("Gagal memuat turun data. Struktur fail rosak.", "danger");
         }
     } else {
         transactions = [];
@@ -31,9 +31,14 @@ function loadData() {
 
 // --- SAVE DATA KE LOCALSTORAGE ---
 function saveData() {
-    localStorage.setItem('bendahari_transactions', JSON.stringify(transactions));
-    updateSummary();
-    renderTransactions();
+    try {
+        localStorage.setItem('bendahari_transactions', JSON.stringify(transactions));
+        updateSummary();
+        renderTransactions();
+    } catch (e) {
+        console.error("Storan gagal disimpan:", e);
+        alert("⚠️ Gagal menyimpan data ke dalam browser!");
+    }
 }
 
 // --- HITUNG & KEMASKINI SUMMARY DASHBOARD ---
@@ -59,7 +64,7 @@ function updateSummary() {
     document.getElementById('txtTotalExpense').innerText = `RM ${totalExpense.toFixed(2)}`;
     document.getElementById('txtTotalCount').innerText = totalCount;
 
-    // Ubah warna Baki Semasa mengikut nilai positif / negatif
+    // Ubah warna teks Baki Semasa mengikut baki positif/negatif
     const balanceElement = document.getElementById('txtBalance');
     if (balance < 0) {
         balanceElement.className = "summary-amount text-danger";
@@ -70,40 +75,21 @@ function updateSummary() {
     }
 }
 
-// --- HANDLE FILE UPLOAD & CONVERT TO BASE64 ---
-function handleFileSelect(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    // Limit saiz fail ke 2MB untuk mengelakkan localStorage cepat penuh
-    if (file.size > 2 * 1024 * 1024) {
-        showToast("Fail terlalu besar! Had maksimum adalah 2MB.", "danger");
-        event.target.value = "";
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        // Simpan rentetan base64 lengkap beserta prefix data URI
-        currentBase64Receipt = e.target.result;
-        
-        // Papar indikator preview fail sedia digunakan
-        const previewCont = document.getElementById('receiptPreviewContainer');
+// --- HANDLE INPUT PAUTAN LINK ---
+function handleLinkInput(event) {
+    const linkVal = event.target.value.trim();
+    currentReceiptLink = linkVal;
+    
+    const previewCont = document.getElementById('receiptPreviewContainer');
+    if (linkVal !== "") {
         previewCont.className = "preview-container";
-        previewCont.innerHTML = `<span class="preview-label">📄 Fail sedia (${file.name})</span>
-                                 <button type="button" class="btn btn-sm btn-danger-outline" style="min-height:28px; padding:2px 8px;" onclick="clearReceiptFile()">Padam</button>`;
-    };
-    reader.readAsDataURL(file);
+        previewCont.innerHTML = `<span class="preview-label">🔗 Pautan dikesan & sedia disimpan.</span>`;
+    } else {
+        previewCont.className = "preview-container hidden";
+    }
 }
 
-// Padam fail yang dipilih dalam borang
-function clearReceiptFile() {
-    document.getElementById('receipt').value = "";
-    currentBase64Receipt = "";
-    document.getElementById('receiptPreviewContainer').className = "preview-container hidden";
-}
-
-// --- DYNAMIC FORM SYLING BERDASARKAN JENIS (INCOME/EXPENSE) ---
+// --- DYNAMIC FORM STYLING BERDASARKAN JENIS (INCOME/EXPENSE) ---
 function toggleFormStyle() {
     const selectedType = document.querySelector('input[name="type"]:checked').value;
     const btnSubmit = document.getElementById('btnSubmit');
@@ -125,6 +111,7 @@ function handleFormSubmit(event) {
     const date = document.getElementById('date').value;
     const category = document.getElementById('category').value;
     const notes = document.getElementById('notes').value.trim();
+    const inputLink = document.getElementById('receiptLink').value.trim();
 
     if (!amount || !date || !category || !notes) {
         showToast("Sila lengkapkan semua ruangan wajib.", "danger");
@@ -140,7 +127,7 @@ function handleFormSubmit(event) {
             date,
             category,
             notes,
-            receipt: currentBase64Receipt // Jika kosong, bermakna tiada resit dimasukkan
+            receipt: inputLink // Menyimpan URL teks (Google Drive dll)
         };
         transactions.push(newTransaction);
         showToast("Transaksi Berjaya Direkodkan!", "success");
@@ -153,12 +140,7 @@ function handleFormSubmit(event) {
             transactions[index].date = date;
             transactions[index].category = category;
             transactions[index].notes = notes;
-            
-            // Jika pengguna menukar atau memuat naik fail baru, gantikan. 
-            // Jika tidak, kekalkan fail resit yang lama.
-            if (currentBase64Receipt !== "") {
-                transactions[index].receipt = currentBase64Receipt;
-            }
+            transactions[index].receipt = inputLink;
             showToast("Transaksi Berjaya Dikemaskini!", "success");
         }
     }
@@ -202,9 +184,8 @@ function renderTransactions() {
         emptyState.className = "empty-state hidden";
     }
 
-    // Bina UI rows & cards secara dinamik
+    // Bina UI secara dinamik
     filtered.forEach(t => {
-        // Format tarikh untuk kemasan paparan tempatan (Contoh: 15/10/2025)
         const dateObj = new Date(t.date);
         const formattedDate = isNaN(dateObj) ? t.date : dateObj.toLocaleDateString('ms-MY');
 
@@ -212,14 +193,10 @@ function renderTransactions() {
         const amountClass = t.type === 'Income' ? 'text-success' : 'text-danger';
         const sign = t.type === 'Income' ? '+' : '-';
 
-        // Penyediaan Button Thumbnail / Ikon Dokumen Resit
-        let receiptHtml = `<span class="thumbnail-receipt" style="opacity: 0.3; cursor: not-allowed;" title="Tiada Bukti">❌</span>`;
+        // Penyediaan Ikon/Pautan Resit
+        let receiptHtml = `<span class="thumbnail-receipt disabled" title="Tiada Bukti">❌</span>`;
         if (t.receipt && t.receipt.trim() !== "") {
-            if (t.receipt.startsWith("data:application/pdf")) {
-                receiptHtml = `<div class="thumbnail-receipt" onclick="viewReceipt('${t.id}')" title="Lihat PDF">📄</div>`;
-            } else {
-                receiptHtml = `<img src="${t.receipt}" class="thumbnail-receipt" onclick="viewReceipt('${t.id}')" alt="Resit" title="Lihat Gambar">`;
-            }
+            receiptHtml = `<button class="thumbnail-receipt" onclick="viewReceipt('${t.id}')" title="Buka Pautan Bukti">🔗</button>`;
         }
 
         // 1. Suntik ke Tabel Desktop
@@ -229,7 +206,7 @@ function renderTransactions() {
             <td><strong>${t.category}</strong></td>
             <td>${t.notes}</td>
             <td><span class="badge ${badgeClass}">${t.type}</span></td>
-            <td class="${amountClass} font-bold" style="font-weight:600;">${sign}RM ${parseFloat(t.amount).toFixed(2)}</td>
+            <td class="${amountClass}" style="font-weight:600;">${sign}RM ${parseFloat(t.amount).toFixed(2)}</td>
             <td>${receiptHtml}</td>
             <td>
                 <div class="btn-group-actions">
@@ -256,7 +233,7 @@ function renderTransactions() {
             <div class="mobile-card-notes">${t.notes}</div>
             <div class="mobile-card-bottom">
                 <div>
-                    <span style="font-size: 0.75rem; color: var(--text-light); display:block;">Bukti Fail:</span>
+                    <span style="font-size: 0.75rem; color: var(--text-light); display:block; margin-bottom:2px;">Resit:</span>
                     ${receiptHtml}
                 </div>
                 <div class="mobile-actions">
@@ -274,7 +251,7 @@ function editTransaction(id) {
     const transaction = transactions.find(t => t.id === id);
     if (!transaction) return;
 
-    // Tukar tajuk borang dan aktifkan butang batal
+    // Tukar tajuk borang dan urus aktif butang batal
     document.getElementById('formTitle').innerText = "Kemaskini Rekod";
     document.getElementById('btnCancelEdit').className = "btn btn-outline btn-block";
     document.getElementById('btnSubmit').innerText = "Simpan Perubahan";
@@ -282,7 +259,6 @@ function editTransaction(id) {
     // Set nilai form elements mengikut data sedia ada
     document.getElementById('transactionId').value = transaction.id;
     
-    // Set Radio Button Jenis
     const radios = document.getElementsByName('type');
     for (let i = 0; i < radios.length; i++) {
         if (radios[i].value === transaction.type) {
@@ -295,24 +271,21 @@ function editTransaction(id) {
     document.getElementById('date').value = transaction.date;
     document.getElementById('category').value = transaction.category;
     document.getElementById('notes').value = transaction.notes;
+    document.getElementById('receiptLink').value = transaction.receipt || "";
 
-    // Reset base64 global untuk edit. 
-    currentBase64Receipt = ""; 
-
-    // Urus info preview dokumen jika ada fail sedia ada
+    // Kemaskini kawasan informasi pautan sedia ada
     const previewCont = document.getElementById('receiptPreviewContainer');
     if (transaction.receipt && transaction.receipt.trim() !== "") {
         previewCont.className = "preview-container";
-        const isPdf = transaction.receipt.startsWith("data:application/pdf");
-        previewCont.innerHTML = `<span class="preview-label">📂 Mempunyai dokumen bukti lama (${isPdf ? 'PDF' : 'Imej'})</span>
-                                 <button type="button" class="btn btn-sm btn-outline" style="min-height:28px; padding:2px 8px;" onclick="viewReceipt('${transaction.id}')">Lihat</button>`;
+        previewCont.innerHTML = `<span class="preview-label">🔗 Mempunyai pautan resit disimpan.</span>
+                                 <button type="button" class="btn btn-sm btn-outline" style="min-height:28px; padding:2px 8px;" onclick="viewReceipt('${transaction.id}')">Buka Link</button>`;
     } else {
         previewCont.className = "preview-container hidden";
     }
 
     toggleFormStyle();
     
-    // Fokus skrol kembali ke atas borang untuk memudahkan pengguna telefon
+    // Skrol automatik ke atas borang (bagus untuk kegunaan peranti telefon)
     document.getElementById('formTitle').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -324,14 +297,13 @@ function deleteTransaction(id) {
         saveData();
         showToast("Rekod transaksi berjaya dipadamkan.", "success");
         
-        // Sekiranya transaksi yang sedang diedit itu dipadamkan, bersihkan borang
         if (document.getElementById('transactionId').value === id) {
             clearForm();
         }
     }
 }
 
-// --- CLEAR / CLEARING FORM STATE ---
+// --- BERSIHKAN SEMULA BORANG (RESET FORM STATE) ---
 function clearForm() {
     document.getElementById('formTitle').innerText = "Tambah Transaksi";
     document.getElementById('btnCancelEdit').className = "btn btn-outline btn-block hidden";
@@ -341,53 +313,28 @@ function clearForm() {
     document.getElementById('amount').value = "";
     document.getElementById('notes').value = "";
     document.getElementById('category').value = "";
-    document.getElementById('receipt').value = "";
+    document.getElementById('receiptLink').value = "";
     
-    // Set balik tarikh hari ini
+    // Kembalikan tarikh kepada hari ini
     document.getElementById('date').value = new Date().toISOString().split('T')[0];
-    
-    // Set default Radio button semula ke 'Income'
     document.getElementsByName('type')[0].checked = true;
     
-    currentBase64Receipt = "";
+    currentReceiptLink = "";
     document.getElementById('receiptPreviewContainer').className = "preview-container hidden";
     
     toggleFormStyle();
 }
 
-// --- VIEW RECEIPT FULLSCREEN POPUP MODAL ---
+// --- BUKA PAUTAN RESIT (VIEW LINK) ---
 function viewReceipt(id) {
     const transaction = transactions.find(t => t.id === id);
-    if (!transaction || !transaction.receipt) {
-        showToast("Tiada dokumen atau fail resit disertakan.", "danger");
+    if (!transaction || !transaction.receipt || transaction.receipt.trim() === "") {
+        showToast("Tiada pautan dokumen atau resit untuk transaksi ini.", "danger");
         return;
     }
-
-    const modal = document.getElementById('receiptModal');
-    const modalBody = document.getElementById('modalBody');
     
-    modalBody.innerHTML = ""; // Kosongkan modal dahulu
-
-    // Semak format fail sama ada PDF atau Data Imej Base64 biasa
-    if (transaction.receipt.startsWith("data:application/pdf")) {
-        const iframe = document.createElement('iframe');
-        iframe.src = transaction.receipt;
-        modalBody.appendChild(iframe);
-    } else {
-        const img = document.createElement('img');
-        img.src = transaction.receipt;
-        img.alt = "Bukti Dokumen Kewangan";
-        modalBody.appendChild(img);
-    }
-
-    modal.className = "modal"; // Tunjukkan modal
-}
-
-function closeModal(event) {
-    // Tutup hanya jika pengguna klik butang pangkah atau klik luar kawasan modal-content
-    if (event.target.id === 'receiptModal' || event.target.className === 'modal-close') {
-        document.getElementById('receiptModal').className = "modal hidden";
-    }
+    // Buka pautan luar (Google Drive/Dropbox) di tab baru pelayar web
+    window.open(transaction.receipt, '_blank');
 }
 
 // --- EXPORT DATA SEBAGAI FAIL CSV ---
@@ -397,19 +344,18 @@ function exportCSV() {
         return;
     }
 
-    // Bina struktur baris demi baris CSV dengan BOM suapan untuk sokongan Microsoft Excel (tulisan khas/RM)
+    // Bina struktur baris demi baris CSV beserta BOM suapan khas untuk sokongan Microsoft Excel (Simbol RM/Tulisan Khas)
     let csvContent = "\uFEFF"; 
-    csvContent += "ID,Tarikh,Jenis,Kategori,Sebab Catatan,Jumlah (RM)\n";
+    csvContent += "ID,Tarikh,Jenis,Kategori,Sebab Catatan,Pautan Resit,Jumlah (RM)\n";
 
     transactions.forEach(t => {
-        // Bersihkan sebarang koma atau tanda petik di dalam teks catatan bagi mengelakkan kerosakan format CSV
         const cleanNotes = t.notes.replace(/"/g, '""');
         const cleanCategory = t.category.replace(/"/g, '""');
+        const cleanLink = (t.receipt || "").replace(/"/g, '""');
         
-        csvContent += `"${t.id}","${t.date}","${t.type}","${cleanCategory}","${cleanNotes}","${parseFloat(t.amount).toFixed(2)}"\n`;
+        csvContent += `"${t.id}","${t.date}","${t.type}","${cleanCategory}","${cleanNotes}","${cleanLink}","${parseFloat(t.amount).toFixed(2)}"\n`;
     });
 
-    // Cipta objek Blob muat turun fail maya browser
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     
@@ -427,7 +373,7 @@ function exportCSV() {
 
 // --- RESET DATA KESELURUHAN ---
 function resetData() {
-    const doubleConfirm = confirm("PERINGATAN KRITIKAL:\nAdakah anda pasti untuk padam SEMUA data transaksi dan resit? Tindakan ini tidak boleh dikembalikan.");
+    const doubleConfirm = confirm("PERINGATAN UTAMA:\nAdakah anda pasti untuk padam SEMUA data transaksi dalam sistem? Tindakan ini tidak boleh dikembalikan.");
     if (doubleConfirm) {
         transactions = [];
         localStorage.removeItem('bendahari_transactions');
@@ -438,21 +384,19 @@ function resetData() {
     }
 }
 
-// --- SISTEM TOAST NOTIFICATION DYNAMIC ---
+// --- SISTEM TOAST NOTIFICATION ---
 function showToast(message, status = "success") {
     const toast = document.getElementById('toastNotification');
     toast.innerText = message;
     
-    // Tukar warna mengikut status maklum balas
     if (status === "success") {
         toast.style.backgroundColor = "#2ecc71";
     } else {
         toast.style.backgroundColor = "#e74c3c";
     }
     
-    toast.className = "toast"; // Tampilkan toast
+    toast.className = "toast";
 
-    // Sembunyikan secara automatik selepas 3.5 saat
     setTimeout(() => {
         toast.className = "toast hidden";
     }, 3500);
