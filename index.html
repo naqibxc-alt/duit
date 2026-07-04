@@ -3,79 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Tracker - Naib Bendahari</title>
-    <!-- Google Font: Poppins -->
+    <title>Sistem Pengurusan Kewangan Persatuan</title>
+    <!-- Import Pustaka CSS Google Fonts & Lucide Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Lucide Icons untuk UI Premium -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- Lucide Icons Development Script -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-    <!-- Header / Navigation -->
-    <header class="main-header">
-        <div class="header-container">
-            <div class="logo-area">
-                <i data-lucide="wallet" class="logo-icon"></i>
-                <div>
-                    <h1>Finance<span>Tracker</span></h1>
-                    <p class="sub-title">Sistem Pengurusan Kewangan Persatuan</p>
-                </div>
+    <div class="app-container">
+        <!-- BAHAGIAN ATAS: Header & Rumusan Impak Kewangan -->
+        <header class="app-header">
+            <div class="header-title">
+                <h1>Finance Tracker</h1>
+                <p>Sistem Pengurusan Rekod Naib Bendahari Persatuan</p>
             </div>
-            <div class="action-utils">
-                <button id="btn-export" class="btn btn-secondary">
-                    <i data-lucide="download"></i> Export CSV
-                </button>
-                <button id="btn-reset" class="btn btn-danger-outline">
-                    <i data-lucide="refresh-cw"></i> Reset Semua
-                </button>
+            <div class="header-actions">
+                <button id="btn-export" class="btn btn-secondary"><i data-lucide="download"></i> Eksport Eksport CSV</button>
+                <button id="btn-reset" class="btn btn-danger"><i data-lucide="refresh-cw"></i> Padam Semua Data</button>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <main class="main-container">
-        <!-- Dashboard Summary Cards -->
-        <section class="dashboard-grid">
+        <!-- KAD METRIK UTAMA -->
+        <section class="summary-grid">
             <div class="card card-balance">
-                <div class="card-header">
-                    <span>Baki Semasa</span>
-                    <i data-lucide="scale"></i>
+                <div class="card-meta">
+                    <span>Baki Bersih Semasa</span>
+                    <i data-lucide="wallet" class="icon-balance"></i>
                 </div>
                 <h2 id="txt-balance">RM 0.00</h2>
-                <p id="txt-total-trx" class="card-meta">0 Transaksi Direkodkan</p>
+                <small id="txt-total-trx">0 Transaksi Direkodkan</small>
             </div>
             <div class="card card-income">
-                <div class="card-header">
+                <div class="card-meta">
                     <span>Jumlah Pendapatan</span>
-                    <i data-lucide="arrow-up-right" class="icon-income"></i>
+                    <i data-lucide="trending-up" class="icon-income"></i>
                 </div>
-                <h2 id="txt-income">RM 0.00</h2>
+                <h3 id="txt-income">RM 0.00</h3>
             </div>
             <div class="card card-expense">
-                <div class="card-header">
+                <div class="card-meta">
                     <span>Jumlah Perbelanjaan</span>
-                    <i data-lucide="arrow-down-left" class="icon-expense"></i>
+                    <i data-lucide="trending-down" class="icon-expense"></i>
                 </div>
-                <h2 id="txt-expense">RM 0.00</h2>
+                <h3 id="txt-expense">RM 0.00</h3>
             </div>
         </section>
 
-        <!-- Main Content Area -->
-        <div class="content-layout">
-            <!-- Left Side: Form Section -->
+        <!-- KANDUNGAN UTAMA: Form & Jadual -->
+        <main class="main-content-grid">
+            
+            <!-- BLOK KIRI: Borang Kemasukan Data -->
             <section class="form-section">
                 <div class="panel">
-                    <h3 id="form-title" class="panel-title">Tambah Transaksi Baru</h3>
+                    <h2 id="form-title">Tambah Transaksi Baru</h2>
                     <form id="finance-form">
                         <input type="hidden" id="edit-id">
-                        
+
                         <div class="form-group">
                             <label for="trx-type">Jenis Transaksi</label>
                             <select id="trx-type" required>
-                                <option value="Income">Income (Pendapatan)</option>
-                                <option value="Expense">Expense (Perbelanjaan)</option>
+                                <option value="Expense" selected>Perbelanjaan (Keluar)</option>
+                                <option value="Income">Pendapatan (Masuk)</option>
                             </select>
                         </div>
 
@@ -84,99 +76,105 @@
                             <input type="number" id="trx-amount" step="0.01" min="0.01" placeholder="0.00" required>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="trx-date">Tarikh</label>
-                                <input type="date" id="trx-date" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="trx-category">Kategori</label>
-                                <select id="trx-category" required>
-                                    <option value="" disabled selected>Pilih Kategori</option>
-                                    <option value="Yuran">Yuran</option>
-                                    <option value="Tajaan">Tajaan</option>
-                                    <option value="Program">Program</option>
-                                    <option value="Makanan">Makanan</option>
-                                    <option value="Pengangkutan">Pengangkutan</option>
-                                    <option value="Lain-lain">Lain-lain</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                            <label for="trx-date">Tarikh Transaksi</label>
+                            <input type="date" id="trx-date" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="trx-reason">Tujuan / Justifikasi</label>
-                            <input type="text" id="trx-reason" placeholder="Contoh: Pembelian barang program" required>
+                            <label for="trx-category">Kategori Khas</label>
+                            <select id="trx-category" required>
+                                <option value="" disabled selected>-- Pilih Kategori --</option>
+                                <option value="Yuran Ahli">Yuran Ahli / Pendaftaran</option>
+                                <option value="Dana & Tajaan">Dana / Sumbangan Luar</option>
+                                <option value="Sewa & Logistik">Sewa Aset & Logistik</option>
+                                <option value="Makanan & Minuman">Makanan & Minuman Program</option>
+                                <option value="Sijil & Hadiah">Sijil, Hadiah & Cenderahati</option>
+                                <option value="Alatan Pejabat">Alatan Pejabat & Cetakan</option>
+                                <option value="Lain-lain">Lain-lain Urusan</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="trx-reason">Tujuan / Justifikasi Perbelanjaan</label>
+                            <textarea id="trx-reason" rows="3" placeholder="Sila nyatakan sebab penuh transaksi..." required></textarea>
+                        </div>
+
+                        <!-- CIRI BARU: Muat Naik Fail Bukti / Tangkap Gambar Resit -->
+                        <div class="form-group">
+                            <label for="trx-receipt">Gambar Bukti / Resit (Pilihan)</label>
+                            <input type="file" id="trx-receipt" accept="image/*" capture="environment">
+                            <small class="input-help-text">
+                                Boleh pilih fail imej atau terus tangkap gambar guna kamera telefon.
+                            </small>
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" id="btn-submit" class="btn btn-primary">
-                                <i data-lucide="plus-circle"></i> Add Transaction
-                            </button>
-                            <button type="button" id="btn-cancel-edit" class="btn btn-text" style="display: none;">
-                                Batal Edit
-                            </button>
+                            <button type="submit" id="btn-submit" class="btn btn-primary"><i data-lucide="plus-circle"></i> Simpan Transaksi</button>
+                            <button type="button" id="btn-cancel-edit" class="btn btn-ghost" style="display: none;">Batal</button>
                         </div>
                     </form>
                 </div>
             </section>
 
-            <!-- Right Side: Table & Controls Section -->
+            <!-- BLOK KANAN: Jadual Senarai Transaksi & Tapisan -->
             <section class="table-section">
                 <div class="panel">
-                    <!-- Controls (Search, Filter, Sort) -->
-                    <div class="controls-grid">
+                    
+                    <!-- Sistem Tapisan & Carian -->
+                    <div class="filter-toolbar">
                         <div class="search-box">
-                            <i data-lucide="search" class="search-icon"></i>
+                            <i data-lucide="search" class="icon-search"></i>
                             <input type="text" id="search-input" placeholder="Cari ID, tujuan atau kategori...">
                         </div>
-                        <div class="filter-box">
+                        <div class="select-filters">
                             <select id="filter-type">
                                 <option value="All">Semua Jenis</option>
-                                <option value="Income">Income</option>
-                                <option value="Expense">Expense</option>
+                                <option value="Income">Pendapatan</option>
+                                <option value="Expense">Perbelanjaan</option>
                             </select>
-                        </div>
-                        <div class="sort-box">
                             <select id="sort-by">
-                                <option value="Newest">Terbaru</option>
-                                <option value="Oldest">Terdahulu</option>
-                                <option value="Highest Amount">Amaun Tertinggi</option>
-                                <option value="Lowest Amount">Amaun Terendah</option>
+                                <option value="Newest">Tarikh: Terbaru</option>
+                                <option value="Oldest">Tarikh: Terlama</option>
+                                <option value="Highest Amount">Amaun: Tertinggi</option>
+                                <option value="Lowest Amount">Amaun: Terendah</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Responsive Table Wrapper -->
-                    <div class="table-responsive">
-                        <table class="data-table">
+                    <!-- Jadual Responsif -->
+                    <div class="table-container">
+                        <table>
                             <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Tarikh</th>
                                     <th>Kategori</th>
-                                    <th>Tujuan</th>
+                                    <th>Tujuan & Bukti</th>
                                     <th>Jenis</th>
                                     <th>Amaun</th>
-                                    <th class="text-center">Tindakan</th>
+                                    <th>Tindakan</th>
                                 </tr>
                             </thead>
                             <tbody id="table-body">
-                                <!-- Data diletakkan secara dinamik melalui JavaScript -->
+                                <!-- Data dimasukkan melalui JavaScript secara dinamik -->
                             </tbody>
                         </table>
                     </div>
-                    
-                    <!-- Empty State View -->
-                    <div id="empty-state" class="empty-state" style="display: none;">
-                        <i data-lucide="database-zap"></i>
-                        <p>Tiada data transaksi dijumpai padan dengan kriteria anda.</p>
+
+                    <!-- Empty State (Jika Tiada Transaksi) -->
+                    <div id="empty-state" class="empty-state">
+                        <i data-lucide="database-backup"></i>
+                        <p>Tiada rekod transaksi dijumpai padan dengan tapisan anda.</p>
                     </div>
+
                 </div>
             </section>
-        </div>
-    </main>
 
-    <!-- Script Utama -->
+        </main>
+    </div>
+
+    <!-- Hubungkan Kod Logik JavaScript Luaran -->
     <script src="script.js"></script>
 </body>
 </html>
