@@ -3,178 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pengurusan Kewangan Persatuan</title>
-    <!-- Import Pustaka CSS Google Fonts & Lucide Icons -->
+    <title>Finance Tracker Bendahari</title>
+    <!-- Google Fonts: Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Fail CSS Utama -->
     <link rel="stylesheet" href="style.css">
-    <!-- Lucide Icons Development Script -->
-    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-    <div class="app-container">
-        <!-- BAHAGIAN ATAS: Header & Rumusan Impak Kewangan -->
-        <header class="app-header">
-            <div class="header-title">
-                <h1>Finance Tracker</h1>
-                <p>Sistem Pengurusan Rekod Naib Bendahari Persatuan</p>
+    <!-- Header / Navigasi -->
+    <header class="app-header">
+        <div class="container header-container">
+            <div class="logo-area">
+                <span class="logo-icon">💰</span>
+                <h1>Bendahari<span class="text-primary">Tracker</span></h1>
             </div>
-            <div class="header-actions">
-                <button id="btn-export" class="btn btn-secondary"><i data-lucide="download"></i> Eksport CSV</button>
-                <button id="btn-reset" class="btn btn-danger"><i data-lucide="refresh-cw"></i> Padam Semua</button>
+            <div class="action-utils">
+                <button id="btnExport" class="btn btn-outline" onclick="exportCSV()">⬆️ Export CSV</button>
+                <button id="btnReset" class="btn btn-danger-outline" onclick="resetData()">⚠️ Reset Semua</button>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <!-- KAD METRIK UTAMA -->
-        <section class="summary-grid">
-            <div class="card card-balance">
-                <div class="card-meta">
-                    <span>Baki Bersih Semasa</span>
-                    <i data-lucide="wallet" class="icon-balance"></i>
-                </div>
-                <h2 id="txt-balance">RM 0.00</h2>
-                <small id="txt-total-trx">0 Transaksi Direkodkan</small>
+    <main class="container app-content">
+        <!-- Bahagian Ringkasan / Dashboard (Cards) -->
+        <section class="dashboard-summary">
+            <div class="summary-card balance-card">
+                <h3>Baki Semasa</h3>
+                <p id="txtBalance" class="summary-amount">RM 0.00</p>
             </div>
-            <div class="card card-income">
-                <div class="card-meta">
-                    <span>Jumlah Pendapatan</span>
-                    <i data-lucide="trending-up" class="icon-income"></i>
-                </div>
-                <h3 id="txt-income">RM 0.00</h3>
+            <div class="summary-card income-card">
+                <h3>Jumlah Pendapatan</h3>
+                <p id="txtTotalIncome" class="summary-amount text-success">RM 0.00</p>
             </div>
-            <div class="card card-expense">
-                <div class="card-meta">
-                    <span>Jumlah Perbelanjaan</span>
-                    <i data-lucide="trending-down" class="icon-expense"></i>
-                </div>
-                <h3 id="txt-expense">RM 0.00</h3>
+            <div class="summary-card expense-card">
+                <h3>Jumlah Perbelanjaan</h3>
+                <p id="txtTotalExpense" class="summary-amount text-danger">RM 0.00</p>
+            </div>
+            <div class="summary-card trans-card">
+                <h3>Jumlah Transaksi</h3>
+                <p id="txtTotalCount" class="summary-amount">0</p>
             </div>
         </section>
 
-        <!-- KANDUNGAN UTAMA: Form & Jadual -->
-        <main class="main-content-grid">
-            
-            <!-- BLOK KIRI: Borang Kemasukan Data -->
+        <div class="main-grid">
+            <!-- Borang Tambah / Edit Transaksi -->
             <section class="form-section">
-                <div class="panel">
-                    <h2 id="form-title">Tambah Transaksi Baru</h2>
-                    <form id="finance-form">
-                        <input type="hidden" id="edit-id">
+                <div class="card">
+                    <h2 id="formTitle">Tambah Transaksi</h2>
+                    <form id="transactionForm" onsubmit="handleFormSubmit(event)">
+                        <!-- Input Hidden untuk Simpan ID ketika Edit -->
+                        <input type="hidden" id="transactionId" value="">
 
                         <div class="form-group">
-                            <label for="trx-type">Jenis Transaksi</label>
-                            <select id="trx-type" required>
-                                <option value="Expense" selected>Perbelanjaan (Keluar)</option>
-                                <option value="Income">Pendapatan (Masuk)</option>
+                            <label>Jenis Transaksi</label>
+                            <div class="radio-toggle-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="type" value="Income" checked onclick="toggleFormStyle()">
+                                    <span class="radio-button radio-income">Income</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="type" value="Expense" onclick="toggleFormStyle()">
+                                    <span class="radio-button radio-expense">Expense</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="amount">Jumlah (RM)</label>
+                            <input type="number" id="amount" step="0.01" min="0.01" required placeholder="0.00">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="date">Tarikh</label>
+                            <input type="date" id="date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">Kategori</label>
+                            <select id="category" required>
+                                <option value="" disabled selected>Pilih Kategori</option>
+                                <option value="Yuran">Yuran</option>
+                                <option value="Program">Program</option>
+                                <option value="Tajaan">Tajaan</option>
+                                <option value="Makanan">Makanan</option>
+                                <option value="Pengangkutan">Pengangkutan</option>
+                                <option value="Lain-lain">Lain-lain</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="trx-amount">Amaun (RM)</label>
-                            <input type="number" id="trx-amount" step="0.01" min="0.01" placeholder="0.00" required>
+                            <label for="notes">Sebab / Catatan</label>
+                            <textarea id="notes" rows="2" required placeholder="Sebab pembayaran atau penerimaan wang"></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label for="trx-date">Tarikh Transaksi</label>
-                            <input type="date" id="trx-date" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="trx-category">Kategori Khas</label>
-                            <select id="trx-category" required>
-                                <option value="" disabled selected>-- Pilih Kategori --</option>
-                                <option value="Yuran Ahli">Yuran Ahli / Pendaftaran</option>
-                                <option value="Dana & Tajaan">Dana / Sumbangan Luar</option>
-                                <option value="Sewa & Logistik">Sewa Aset & Logistik</option>
-                                <option value="Makanan & Minuman">Makanan & Minuman Program</option>
-                                <option value="Sijil & Hadiah">Sijil, Hadiah & Cenderahati</option>
-                                <option value="Alatan Pejabat">Alatan Pejabat & Cetakan</option>
-                                <option value="Lain-lain">Lain-lain Urusan</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="trx-reason">Tujuan / Justifikasi Perbelanjaan</label>
-                            <textarea id="trx-reason" rows="3" placeholder="Sila nyatakan sebab penuh transaksi..." required></textarea>
-                        </div>
-
-                        <!-- Gambar Bukti / Resit -->
-                        <div class="form-group">
-                            <label for="trx-receipt">Gambar Bukti / Resit (Pilihan)</label>
-                            <input type="file" id="trx-receipt" accept="image/*" capture="environment">
-                            <small class="input-help-text">
-                                Boleh pilih fail imej atau terus tangkap gambar guna kamera telefon.
-                            </small>
+                            <label for="receipt">Bukti Pembayaran / Resit</label>
+                            <div class="file-drop-zone">
+                                <input type="file" id="receipt" accept=".jpg, .jpeg, .png, .pdf" onchange="handleFileSelect(event)">
+                                <div class="file-msg">Klik atau letak file gambar/PDF di sini</div>
+                            </div>
+                            <div id="receiptPreviewContainer" class="preview-container hidden">
+                                <span class="preview-label">File sedia ada tersimpan</span>
+                            </div>
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" id="btn-submit" class="btn btn-primary"><i data-lucide="plus-circle"></i> Simpan Rekod</button>
-                            <button type="button" id="btn-cancel-edit" class="btn btn-ghost" style="display: none;">Batal</button>
+                            <button type="submit" id="btnSubmit" class="btn btn-primary btn-block">Simpan Transaksi</button>
+                            <button type="button" id="btnCancelEdit" class="btn btn-outline btn-block hidden" onclick="clearForm()">Batal Edit</button>
                         </div>
                     </form>
                 </div>
             </section>
 
-            <!-- BLOK KANAN: Jadual Senarai Transaksi & Tapisan -->
-            <section class="table-section">
-                <div class="panel">
+            <!-- Senarai Transaksi, Search & Filter -->
+            <section class="list-section">
+                <div class="card">
+                    <h2>Senarai Rekod Kewangan</h2>
                     
-                    <!-- Sistem Tapisan & Carian -->
-                    <div class="filter-toolbar">
+                    <!-- Kawalan Carian & Tapis -->
+                    <div class="filter-controls">
                         <div class="search-box">
-                            <i data-lucide="search" class="icon-search"></i>
-                            <input type="text" id="search-input" placeholder="Cari ID, tujuan...">
+                            <input type="text" id="searchBar" placeholder="Cari sebab atau kategori..." oninput="renderTransactions()">
                         </div>
-                        <div class="select-filters">
-                            <select id="filter-type">
+                        <div class="filter-selectors">
+                            <select id="filterType" onchange="renderTransactions()">
                                 <option value="All">Semua Jenis</option>
-                                <option value="Income">Pendapatan</option>
-                                <option value="Expense">Perbelanjaan</option>
+                                <option value="Income">Income Sahaja</option>
+                                <option value="Expense">Expense Sahaja</option>
                             </select>
-                            <select id="sort-by">
-                                <option value="Newest">Terbaru</option>
-                                <option value="Oldest">Terlama</option>
-                                <option value="Highest Amount">Tertinggi</option>
-                                <option value="Lowest Amount">Terendah</option>
+                            <select id="sortOrder" onchange="renderTransactions()">
+                                <option value="newest">Tarikh Terbaru</option>
+                                <option value="oldest">Tarikh Lama</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Jadual Responsif (Desktop Sahaja) / Kad (Mobile) -->
-                    <div class="table-container">
-                        <table>
+                    <!-- Paparan Desktop (Table) -->
+                    <div class="table-responsive-desktop">
+                        <table class="transaction-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Tarikh</th>
                                     <th>Kategori</th>
-                                    <th>Tujuan & Bukti</th>
+                                    <th>Sebab / Catatan</th>
                                     <th>Jenis</th>
-                                    <th>Amaun</th>
+                                    <th>Jumlah</th>
+                                    <th>Resit</th>
                                     <th>Tindakan</th>
                                 </tr>
                             </thead>
-                            <tbody id="table-body">
-                                <!-- Data dimasukkan melalui JavaScript -->
+                            <tbody id="desktopTransactionList">
+                                <!-- Data akan dimasukkan oleh JS -->
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Empty State -->
-                    <div id="empty-state" class="empty-state">
-                        <i data-lucide="database-backup"></i>
-                        <p>Tiada rekod transaksi dijumpai.</p>
+                    <!-- Paparan Mobile (Cards) -->
+                    <div id="mobileTransactionList" class="mobile-cards-container">
+                        <!-- Data akan dimasukkan oleh JS -->
                     </div>
 
+                    <!-- Mesej Jika Tiada Data -->
+                    <div id="emptyState" class="empty-state hidden">
+                        <p>Tiada rekod transaksi dijumpai.</p>
+                    </div>
                 </div>
             </section>
+        </div>
+    </main>
 
-        </main>
+    <!-- Modal Popup / Lightbox untuk Lihat Resit Penuh -->
+    <div id="receiptModal" class="modal hidden" onclick="closeModal(event)">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal(event)">&times;</span>
+            <h3>Bukti Dokumen / Resit</h3>
+            <div id="modalBody" class="modal-body">
+                <!-- Kandungan sama ada Image atau PDF iframe disuntik di sini -->
+            </div>
+        </div>
     </div>
 
-    <!-- Hubungkan Kod Logik JavaScript Luaran -->
+    <!-- Sistem Notifikasi Toast -->
+    <div id="toastNotification" class="toast hidden"></div>
+
+    <!-- Fail JS Utama -->
     <script src="script.js"></script>
 </body>
 </html>
