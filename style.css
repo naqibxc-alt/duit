@@ -11,8 +11,8 @@
     --color-income: #10b981;   /* Emerald 500 */
     --color-expense: #ef4444;  /* Red 500 */
     
-    --radius-sm: 6px;
-    --radius-md: 12px;
+    --radius-sm: 8px;
+    --radius-md: 14px;
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
     --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -23,6 +23,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Buang warna biru bila klik di phone */
 }
 
 body {
@@ -30,7 +31,7 @@ body {
     color: var(--text-main);
     font-family: 'Plus Jakarta Sans', sans-serif;
     line-height: 1.5;
-    padding: 24px;
+    padding: 16px; /* Dikurangkan sedikit untuk mobile */
 }
 
 .app-container {
@@ -41,27 +42,33 @@ body {
 /* Header Area */
 .app-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column; /* Mobile first: menegak */
+    gap: 16px;
     margin-bottom: 24px;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 20px;
 }
 
 .header-title h1 {
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     font-weight: 700;
     letter-spacing: -0.02em;
 }
 
 .header-title p {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .header-actions {
     display: flex;
-    gap: 12px;
+    gap: 10px;
+    width: 100%;
+}
+
+.header-actions .btn {
+    flex: 1; /* Butang sama lebar di mobile */
+    justify-content: center;
 }
 
 /* Kategori Reka Bentuk Butang */
@@ -69,7 +76,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 18px;
+    padding: 12px 18px; /* Lebih besar sikit untuk keselesaan jari */
     border-radius: var(--radius-sm);
     font-size: 0.875rem;
     font-weight: 600;
@@ -79,45 +86,26 @@ body {
     font-family: inherit;
 }
 
-.btn-primary {
-    background-color: var(--color-primary);
-    color: white;
-}
-.btn-primary:hover {
-    background-color: var(--color-primary-hover);
-}
+.btn-primary { background-color: var(--color-primary); color: white; }
+.btn-primary:hover { background-color: var(--color-primary-hover); }
 
-.btn-secondary {
-    background-color: var(--border-color);
-    color: var(--text-main);
-}
-.btn-secondary:hover {
-    background-color: #475569;
-}
+.btn-secondary { background-color: var(--border-color); color: var(--text-main); }
+.btn-secondary:hover { background-color: #475569; }
 
 .btn-danger {
     background-color: rgba(239, 68, 68, 0.15);
     color: var(--color-expense);
     border: 1px solid rgba(239, 68, 68, 0.3);
 }
-.btn-danger:hover {
-    background-color: var(--color-expense);
-    color: white;
-}
-
-.btn-ghost {
-    background-color: transparent;
-    color: var(--text-muted);
-}
-.btn-ghost:hover {
-    color: var(--text-main);
-}
+.btn-danger:hover { background-color: var(--color-expense); color: white; }
+.btn-ghost { background-color: transparent; color: var(--text-muted); }
+.btn-ghost:hover { color: var(--text-main); }
 
 /* Grid Summary Ringkasan */
 .summary-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: 1fr; /* 1 lajur penuh untuk skrin kecil */
+    gap: 14px;
     margin-bottom: 24px;
 }
 
@@ -125,7 +113,7 @@ body {
     background-color: var(--bg-panel);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 24px;
+    padding: 20px;
     box-shadow: var(--shadow-sm);
 }
 
@@ -134,65 +122,44 @@ body {
     justify-content: space-between;
     align-items: center;
     color: var(--text-muted);
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-bottom: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
 }
 
-.card svg {
-    width: 20px;
-    height: 20px;
-}
-
+.card svg { width: 20px; height: 20px; }
 .icon-balance { color: var(--color-primary); }
 .icon-income { color: var(--color-income); }
 .icon-expense { color: var(--color-expense); }
 
-.card h2 { font-size: 2rem; font-weight: 700; }
-.card h3 { font-size: 1.5rem; font-weight: 700; }
-
-.card small {
-    display: block;
-    color: var(--text-muted);
-    margin-top: 4px;
-    font-size: 0.75rem;
-}
+.card h2 { font-size: 1.8rem; font-weight: 700; }
+.card h3 { font-size: 1.4rem; font-weight: 700; }
+.card small { display: block; color: var(--text-muted); margin-top: 4px; font-size: 0.75rem; }
 
 /* Tata Letak Kandungan Utama */
 .main-content-grid {
     display: grid;
-    grid-template-columns: 380px 1fr;
+    grid-template-columns: 1fr;
     gap: 24px;
-    align-items: start;
-}
-
-@media (max-width: 1024px) {
-    .main-content-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 .panel {
     background-color: var(--bg-panel);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 24px;
+    padding: 20px;
     box-shadow: var(--shadow-lg);
 }
 
 .panel h2 {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     border-left: 4px solid var(--color-primary);
     padding-left: 8px;
 }
 
 /* Struktur Rekabentuk Form */
-.form-group {
-    margin-bottom: 16px;
-}
-
+.form-group { margin-bottom: 16px; }
 .form-group label {
     display: block;
     font-size: 0.85rem;
@@ -207,13 +174,13 @@ body {
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 10px 12px;
+    padding: 12px; /* Input tebal mudah tekan */
     background-color: var(--bg-main);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     color: var(--text-main);
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: 1rem; /* Elak iOS daripada auto-zoom */
     transition: var(--transition);
 }
 
@@ -225,54 +192,33 @@ body {
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
-.form-group input[type="file"] {
-    font-family: inherit;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
-
-.input-help-text {
-    color: var(--text-muted); 
-    font-size: 0.75rem; 
-    display: block; 
-    margin-top: 4px;
-}
-
-.form-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-}
+.input-help-text { color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 4px; }
+.form-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+.form-actions .btn { width: 100%; justify-content: center; }
 
 /* Toolbar Penapis (Filter Toolbar) */
 .filter-toolbar {
     display: flex;
-    justify-content: space-between;
-    gap: 16px;
+    flex-direction: column;
+    gap: 12px;
     margin-bottom: 20px;
-    flex-wrap: wrap;
 }
 
-.search-box {
-    position: relative;
-    flex: 1;
-    min-width: 260px;
-}
-
+.search-box { position: relative; width: 100%; }
 .search-box input {
     width: 100%;
-    padding: 10px 12px 10px 38px;
+    padding: 12px 12px 12px 40px;
     background-color: var(--bg-main);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     color: var(--text-main);
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
 }
 
 .icon-search {
     position: absolute;
-    left: 12px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
     width: 16px;
@@ -281,12 +227,15 @@ body {
 }
 
 .select-filters {
-    display: flex;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
 }
 
 .select-filters select {
-    padding: 10px 14px;
+    width: 100%;
+    padding: 12px;
     background-color: var(--bg-main);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
@@ -295,159 +244,137 @@ body {
     font-size: 0.9rem;
 }
 
-/* Jadual Data Kewangan */
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-}
+/* ==========================================
+   TEKNIK RESPONSIVE: JADUAL DESKTOP VS KAD MOBILE
+   ========================================== */
+.table-container { width: 100%; }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-    font-size: 0.9rem;
-}
+/* Sembunyikan jadual sebenar pada peranti mudah alih secara lalai */
+table { display: none; }
 
-th {
+/* Struktur Kad Transaksi untuk paparan Mobile */
+.mobile-trx-card {
     background-color: var(--bg-main);
-    color: #cbd5e1;
-    font-weight: 600;
-    padding: 12px 16px;
-    border-bottom: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-td {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border-color);
-    vertical-align: middle;
+.mobile-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 8px;
 }
 
-tr:hover td {
-    background-color: rgba(255, 255, 255, 0.02);
+.mobile-card-id { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; }
+.mobile-card-date { font-size: 0.85rem; color: var(--text-muted); }
+
+.mobile-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-/* Reka Bentuk Badge Pengkelasan Kategori */
+.mobile-card-reason { font-size: 0.95rem; font-weight: 500; color: var(--text-main); word-break: break-word; }
+.mobile-card-meta-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.mobile-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mobile-card-actions { display: flex; gap: 12px; }
+
+/* Badges & Text Utility */
 .badge-category {
     background-color: rgba(71, 85, 105, 0.4);
     border: 1px solid var(--border-color);
     color: #e2e8f0;
-    padding: 4px 10px;
+    padding: 2px 8px;
     border-radius: 20px;
     font-size: 0.75rem;
-    font-weight: 500;
 }
 
-.badge {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
+.badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
 .badge-income { background-color: rgba(16, 185, 129, 0.15); color: var(--color-income); }
 .badge-expense { background-color: rgba(239, 68, 68, 0.15); color: var(--color-expense); }
-
-.amt-income { color: var(--color-income); font-weight: 600; }
-.amt-expense { color: var(--color-expense); font-weight: 600; }
-
-.actions-cell {
-    display: flex;
-    gap: 8px;
-}
+.amt-income { color: var(--color-income); font-weight: 700; }
+.amt-expense { color: var(--color-expense); font-weight: 700; }
 
 .btn-icon {
     background: transparent;
     border: none;
     cursor: pointer;
-    padding: 6px;
-    border-radius: 4px;
+    padding: 8px;
+    border-radius: 6px;
     color: var(--text-muted);
-    transition: var(--transition);
     display: inline-flex;
     align-items: center;
 }
-
-.btn-icon svg { width: 16px; height: 16px; }
-
+.btn-icon svg { width: 18px; height: 18px; }
 .btn-edit:hover { background-color: rgba(59, 130, 246, 0.15); color: var(--color-primary); }
 .btn-delete:hover { background-color: rgba(239, 68, 68, 0.15); color: var(--color-expense); }
+.btn-view-receipt { color: #a7f3d0; background-color: rgba(52, 211, 153, 0.1); }
 
-.empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--text-muted);
-    display: none;
-}
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); display: none; }
+.empty-state svg { width: 44px; height: 44px; margin-bottom: 12px; opacity: 0.5; }
 
-.empty-state svg {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 12px;
-    opacity: 0.5;
-}
-
-/* ==========================================
-   STYLING MODAL UNTUK PAPARAN RESIT / BUKTI
-   ========================================== */
+/* Modal Paparan Bukti Gambar */
 .receipt-modal {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(15, 23, 42, 0.9);
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(15, 23, 42, 0.95);
     z-index: 1000;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    backdrop-filter: blur(4px);
+    justify-content: center; align-items: center;
+    padding: 16px; backdrop-filter: blur(4px);
 }
 
 .modal-content {
-    position: relative;
-    max-width: 90%;
-    max-height: 85vh;
-    background-color: var(--bg-panel);
-    padding: 10px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-lg);
+    position: relative; width: 100%; max-width: 500px;
+    background-color: var(--bg-panel); padding: 8px;
+    border-radius: var(--radius-md); border: 1px solid var(--border-color);
 }
 
-.modal-content img {
-    max-width: 100%;
-    max-height: 75vh;
-    object-fit: contain;
-    border-radius: var(--radius-sm);
-}
-
+.modal-content img { width: 100%; max-height: 70vh; object-fit: contain; border-radius: var(--radius-sm); }
 .btn-close-modal {
-    position: absolute;
-    top: -45px;
-    right: 0;
-    background-color: var(--color-expense);
-    color: white;
-    border: none;
-    padding: 6px 14px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: var(--transition);
+    position: absolute; top: -42px; right: 0;
+    background-color: var(--color-expense); color: white;
+    border: none; padding: 6px 14px; border-radius: var(--radius-sm);
+    cursor: pointer; font-family: inherit; font-size: 0.85rem; font-weight: 600;
 }
 
-.btn-close-modal:hover {
-    background-color: #b91c1c;
+/* ==========================================
+   MEDIA QUERY: PAPARAN SKRIN BESAR (DESKTOP / IPAD)
+   ========================================== */
+@media (min-width: 768px) {
+    body { padding: 24px; }
+    .app-header { flex-direction: row; justify-content: space-between; align-items: center; }
+    .header-actions { width: auto; }
+    .header-title h1 { font-size: 1.75rem; }
+    
+    .summary-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .filter-toolbar { flex-direction: row; justify-content: space-between; }
+    .search-box { flex: 1; max-width: 360px; }
+    .select-filters { width: auto; display: flex; }
+    .form-actions { flex-direction: row; }
+    .form-actions .btn { width: auto; }
 }
 
-.btn-view-receipt {
-    color: #a7f3d0;
-    margin-left: 6px;
-}
-.btn-view-receipt:hover {
-    background-color: rgba(52, 211, 153, 0.15);
+@media (min-width: 1024px) {
+    .main-content-grid { grid-template-columns: 380px 1fr; gap: 24px; }
+    
+    /* Kembalikan paparan jadual penuh jika di komputer */
+    table { display: table; }
+    .mobile-trx-card { display: none; }
+    td, th { padding: 14px 16px; }
 }
