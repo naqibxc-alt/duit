@@ -1,5 +1,5 @@
 /**
- * Finance Tracker Engine - Core JavaScript Production Logic (With Receipt Upload)
+ * Finance Tracker Engine - Core JavaScript Production Logic (Mobile-Optimized)
  * Dibangunkan khusus untuk kegunaan Naib Bendahari Persatuan
  */
 
@@ -27,6 +27,7 @@ const txtExpense = document.getElementById('txt-expense');
 const txtTotalTrx = document.getElementById('txt-total-trx');
 
 const tableBody = document.getElementById('table-body');
+const tableContainer = document.querySelector('.table-container'); // Diubah suai untuk mobile injector
 const emptyState = document.getElementById('empty-state');
 
 const searchInput = document.getElementById('search-input');
@@ -90,7 +91,6 @@ function generateTransactionID() {
     return `TRX-${String(nextIdNum).padStart(4, '0')}`;
 }
 
-// Asynchronous Helper: Menukar fail imej fizikal kepada bentuk String Base64 Data URL
 function processFileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -131,7 +131,6 @@ async function handleFormSubmit(e) {
         return;
     }
 
-    // Menguruskan pemprosesan fail bukti gambar jika diupload
     let receiptDataString = null;
     if (trxReceiptInput.files && trxReceiptInput.files[0]) {
         try {
@@ -151,7 +150,6 @@ async function handleFormSubmit(e) {
             transactions[index].category = category;
             transactions[index].reason = reason;
             
-            // Jika ada muat naik fail baharu ketika edit, gantikan fail lama.
             if (receiptDataString) {
                 transactions[index].receipt = receiptDataString;
             }
@@ -165,7 +163,7 @@ async function handleFormSubmit(e) {
             date,
             category,
             reason,
-            receipt: receiptDataString // Menyimpan rujukan gambar (Base64) atau null
+            receipt: receiptDataString
         };
         transactions.push(newTransaction);
     }
@@ -185,11 +183,11 @@ function editTransaction(id) {
     trxDateInput.value = targetTrx.date;
     trxCategoryInput.value = targetTrx.category;
     trxReasonInput.value = targetTrx.reason;
-    trxReceiptInput.value = ''; // Set semula rujukan fail fizikal input kepada kosong
+    trxReceiptInput.value = '';
 
     isEditing = true;
-    formTitle.textContent = `Kemaskini Data [ ${targetTrx.id} ]`;
-    btnSubmit.innerHTML = `<i data-lucide="check-circle"></i> Kemaskini Transaksi`;
+    formTitle.textContent = `Kemaskini [ ${targetTrx.id} ]`;
+    btnSubmit.innerHTML = `<i data-lucide="check-circle"></i> Kemaskini Rekod`;
     btnCancelEdit.style.display = 'inline-block';
     lucide.createIcons();
     
@@ -197,7 +195,7 @@ function editTransaction(id) {
 }
 
 function deleteTransaction(id) {
-    const confirmDelete = confirm(`Adakah anda pasti mahu memadam transaksi ber-ID ${id}?`);
+    const confirmDelete = confirm(`Padam transaksi ${id}?`);
     if (!confirmDelete) return;
 
     if (isEditing && editIdInput.value === id) {
@@ -214,13 +212,12 @@ function resetFormState() {
     editIdInput.value = '';
     isEditing = false;
     formTitle.textContent = 'Tambah Transaksi Baru';
-    btnSubmit.innerHTML = `<i data-lucide="plus-circle"></i> Simpan Transaksi`;
+    btnSubmit.innerHTML = `<i data-lucide="plus-circle"></i> Simpan Rekod`;
     btnCancelEdit.style.display = 'none';
     setDefaultDate();
     lucide.createIcons();
 }
 
-// Kawalan Fungsi Papar / Tutup Modal Resit
 window.openReceipt = function(id) {
     const targetTrx = transactions.find(t => t.id === id);
     if (targetTrx && targetTrx.receipt) {
@@ -297,7 +294,7 @@ function updateSummary() {
     txtBalance.textContent = `RM ${netBalance.toFixed(2)}`;
     txtIncome.textContent = `RM ${incomeSum.toFixed(2)}`;
     txtExpense.textContent = `RM ${expenseSum.toFixed(2)}`;
-    txtTotalTrx.textContent = `${transactions.length} Transaksi Direkodkan`;
+    txtTotalTrx.textContent = `${transactions.length} Transaksi`;
     
     if (netBalance < 0) {
         txtBalance.style.color = 'var(--color-expense)';
@@ -306,7 +303,11 @@ function updateSummary() {
     }
 }
 
+// PIPELINE UNTUK MERENDER JADUAL DESKTOP & KAD MOBILE SERENTAK
 function renderTransactions(dataList) {
+    // 1. Bersihkan elemen kad lama terlebih dahulu (jika ada)
+    const existingCards = tableContainer.querySelectorAll('.mobile-trx-card');
+    existingCards.forEach(card => card.remove());
     tableBody.innerHTML = '';
     
     if (dataList.length === 0) {
@@ -317,8 +318,6 @@ function renderTransactions(dataList) {
     emptyState.style.display = 'none';
     
     dataList.forEach(trx => {
-        const tr = document.createElement('tr');
-        
         const typeBadgeClass = trx.type === 'Income' ? 'badge badge-income' : 'badge badge-expense';
         const amountClass = trx.type === 'Income' ? 'amt-income' : 'amt-expense';
         const amountPrefix = trx.type === 'Income' ? '+' : '-';
@@ -326,9 +325,10 @@ function renderTransactions(dataList) {
         const dateObj = new Date(trx.date);
         const formattedDate = !isNaN(dateObj) ? dateObj.toLocaleDateString('ms-MY') : trx.date;
 
-        // Sekiranya ada rujukan fail gambar resit, wujudkan butang ikon imej di sebelah teks tujuan
+        // --- PIPELINE A: BINA STRUKTUR JADUAL (UNTUK SKRIN BESAR/DESKTOP) ---
+        const tr = document.createElement('tr');
         const receiptButtonMarkup = trx.receipt 
-            ? `<button class="btn-icon btn-view-receipt" onclick="openReceipt('${trx.id}')" title="Lihat Bukti Resit"><i data-lucide="image"></i></button>`
+            ? `<button type="button" class="btn-icon btn-view-receipt" onclick="openReceipt('${trx.id}')" title="Lihat Bukti Resit"><i data-lucide="image"></i></button>`
             : '';
 
         tr.innerHTML = `
@@ -340,16 +340,45 @@ function renderTransactions(dataList) {
             <td class="${amountClass}">${amountPrefix} RM ${trx.amount.toFixed(2)}</td>
             <td>
                 <div class="actions-cell">
-                    <button class="btn-icon btn-edit" onclick="editTransaction('${trx.id}')" title="Edit Transaksi">
-                        <i data-lucide="edit-3"></i>
-                    </button>
-                    <button class="btn-icon btn-delete" onclick="deleteTransaction('${trx.id}')" title="Padam Transaksi">
-                        <i data-lucide="trash-2"></i>
-                    </button>
+                    <button type="button" class="btn-icon btn-edit" onclick="editTransaction('${trx.id}')"><i data-lucide="edit-3"></i></button>
+                    <button type="button" class="btn-icon btn-delete" onclick="deleteTransaction('${trx.id}')"><i data-lucide="trash-2"></i></button>
                 </div>
             </td>
         `;
         tableBody.appendChild(tr);
+
+        // --- PIPELINE B: BINA STRUKTUR KAD (UNTUK SKRIN KECIL/MOBILE) ---
+        const card = document.createElement('div');
+        card.className = 'mobile-trx-card';
+        
+        const mobileReceiptMarkup = trx.receipt 
+            ? `<button type="button" class="btn btn-secondary btn-view-receipt" onclick="openReceipt('${trx.id}')" style="padding: 6px 10px; font-size: 0.8rem;">
+                <i data-lucide="image" style="width:14px;height:14px;"></i> Resit
+               </button>`
+            : '';
+
+        card.innerHTML = `
+            <div class="mobile-card-header">
+                <span class="mobile-card-id">${trx.id}</span>
+                <span class="mobile-card-date">${formattedDate}</span>
+            </div>
+            <div class="mobile-card-body">
+                <div class="mobile-card-reason">${escapeHTML(trx.reason)}</div>
+                <div class="mobile-card-meta-row">
+                    <span class="badge-category">${trx.category}</span>
+                    <span class="${typeBadgeClass}">${trx.type}</span>
+                </div>
+            </div>
+            <div class="mobile-card-footer">
+                <div class="${amountClass}" style="font-size: 1.1rem;">${amountPrefix} RM ${trx.amount.toFixed(2)}</div>
+                <div class="mobile-card-actions">
+                    ${mobileReceiptMarkup}
+                    <button type="button" class="btn-icon btn-edit" onclick="editTransaction('${trx.id}')"><i data-lucide="edit-3"></i></button>
+                    <button type="button" class="btn-icon btn-delete" onclick="deleteTransaction('${trx.id}')"><i data-lucide="trash-2"></i></button>
+                </div>
+            </div>
+        `;
+        tableContainer.appendChild(card);
     });
     
     lucide.createIcons();
@@ -382,20 +411,19 @@ function exportCSV() {
     const encodedUri = encodeURI(csvContent);
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute('href', encodedUri);
-    downloadAnchor.setAttribute('download', `Laporan_Kewangan_Persatuan_${new Date().toISOString().split('T')[0]}.csv`);
+    downloadAnchor.setAttribute('download', `Laporan_Kewangan_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     document.body.removeChild(downloadAnchor);
 }
 
 function resetAllData() {
-    const finalConfirm = confirm('AMARAN: Anda mahu memadam kesemua data rekod transaksi persatuan dalam sistem ini? Tindakan ini tidak boleh dikembalikan.');
-    
+    const finalConfirm = confirm('Padam kesemua data rekod transaksi?');
     if (finalConfirm) {
         localStorage.removeItem('association_transactions');
         transactions = [];
         resetFormState();
         executeViewPipeline();
-        alert('Kesemua data transaksi storan telah berjaya dibersihkan secara total.');
+        alert('Data dibersihkan.');
     }
 }
