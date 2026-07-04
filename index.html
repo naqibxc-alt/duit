@@ -7,7 +7,7 @@
     <!-- Import Pustaka CSS Google Fonts & Lucide Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <!-- Lucide Icons Development Script -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -22,8 +22,8 @@
                 <p>Sistem Pengurusan Rekod Naib Bendahari Persatuan</p>
             </div>
             <div class="header-actions">
-                <button id="btn-export" class="btn btn-secondary"><i data-lucide="download"></i> Eksport Eksport CSV</button>
-                <button id="btn-reset" class="btn btn-danger"><i data-lucide="refresh-cw"></i> Padam Semua Data</button>
+                <button id="btn-export" class="btn btn-secondary"><i data-lucide="download"></i> Eksport CSV</button>
+                <button id="btn-reset" class="btn btn-danger"><i data-lucide="refresh-cw"></i> Padam Semua</button>
             </div>
         </header>
 
@@ -100,7 +100,7 @@
                             <textarea id="trx-reason" rows="3" placeholder="Sila nyatakan sebab penuh transaksi..." required></textarea>
                         </div>
 
-                        <!-- CIRI BARU: Muat Naik Fail Bukti / Tangkap Gambar Resit -->
+                        <!-- Gambar Bukti / Resit -->
                         <div class="form-group">
                             <label for="trx-receipt">Gambar Bukti / Resit (Pilihan)</label>
                             <input type="file" id="trx-receipt" accept="image/*" capture="environment">
@@ -110,7 +110,7 @@
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" id="btn-submit" class="btn btn-primary"><i data-lucide="plus-circle"></i> Simpan Transaksi</button>
+                            <button type="submit" id="btn-submit" class="btn btn-primary"><i data-lucide="plus-circle"></i> Simpan Rekod</button>
                             <button type="button" id="btn-cancel-edit" class="btn btn-ghost" style="display: none;">Batal</button>
                         </div>
                     </form>
@@ -125,7 +125,7 @@
                     <div class="filter-toolbar">
                         <div class="search-box">
                             <i data-lucide="search" class="icon-search"></i>
-                            <input type="text" id="search-input" placeholder="Cari ID, tujuan atau kategori...">
+                            <input type="text" id="search-input" placeholder="Cari ID, tujuan...">
                         </div>
                         <div class="select-filters">
                             <select id="filter-type">
@@ -134,15 +134,15 @@
                                 <option value="Expense">Perbelanjaan</option>
                             </select>
                             <select id="sort-by">
-                                <option value="Newest">Tarikh: Terbaru</option>
-                                <option value="Oldest">Tarikh: Terlama</option>
-                                <option value="Highest Amount">Amaun: Tertinggi</option>
-                                <option value="Lowest Amount">Amaun: Terendah</option>
+                                <option value="Newest">Terbaru</option>
+                                <option value="Oldest">Terlama</option>
+                                <option value="Highest Amount">Tertinggi</option>
+                                <option value="Lowest Amount">Terendah</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Jadual Responsif -->
+                    <!-- Jadual Responsif (Desktop Sahaja) / Kad (Mobile) -->
                     <div class="table-container">
                         <table>
                             <thead>
@@ -157,15 +157,15 @@
                                 </tr>
                             </thead>
                             <tbody id="table-body">
-                                <!-- Data dimasukkan melalui JavaScript secara dinamik -->
+                                <!-- Data dimasukkan melalui JavaScript -->
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Empty State (Jika Tiada Transaksi) -->
+                    <!-- Empty State -->
                     <div id="empty-state" class="empty-state">
                         <i data-lucide="database-backup"></i>
-                        <p>Tiada rekod transaksi dijumpai padan dengan tapisan anda.</p>
+                        <p>Tiada rekod transaksi dijumpai.</p>
                     </div>
 
                 </div>
