@@ -100,14 +100,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="receipt">Bukti Pembayaran / Resit</label>
-                            <div class="file-drop-zone">
-                                <input type="file" id="receipt" accept=".jpg, .jpeg, .png, .pdf" onchange="handleFileSelect(event)">
-                                <div class="file-msg">Klik atau letak file gambar/PDF di sini</div>
-                            </div>
-                            <div id="receiptPreviewContainer" class="preview-container hidden">
-                                <span class="preview-label">File sedia ada tersimpan</span>
-                            </div>
+                            <label for="receiptLink">Pautan Bukti / Resit (Google Drive / Dropbox)</label>
+                            <input type="url" id="receiptLink" placeholder="https://drive.google.com/file/d/.../view" oninput="handleLinkInput(event)">
+                            <div id="receiptPreviewContainer" class="preview-container hidden"></div>
                         </div>
 
                         <div class="form-actions">
@@ -156,14 +151,14 @@
                                 </tr>
                             </thead>
                             <tbody id="desktopTransactionList">
-                                <!-- Data akan dimasukkan oleh JS -->
+                                <!-- Data dimasukkan oleh JS -->
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Paparan Mobile (Cards) -->
                     <div id="mobileTransactionList" class="mobile-cards-container">
-                        <!-- Data akan dimasukkan oleh JS -->
+                        <!-- Data dimasukkan oleh JS -->
                     </div>
 
                     <!-- Mesej Jika Tiada Data -->
@@ -174,17 +169,6 @@
             </section>
         </div>
     </main>
-
-    <!-- Modal Popup / Lightbox untuk Lihat Resit Penuh -->
-    <div id="receiptModal" class="modal hidden" onclick="closeModal(event)">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeModal(event)">&times;</span>
-            <h3>Bukti Dokumen / Resit</h3>
-            <div id="modalBody" class="modal-body">
-                <!-- Kandungan sama ada Image atau PDF iframe disuntik di sini -->
-            </div>
-        </div>
-    </div>
 
     <!-- Sistem Notifikasi Toast -->
     <div id="toastNotification" class="toast hidden"></div>
